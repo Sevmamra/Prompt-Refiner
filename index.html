@@ -518,74 +518,86 @@
       }, 3000);
     }
     
-    // Generate refined prompt
-    async function generatePrompt() {
-      const raw = inputEl.value.trim();
+// Generate refined prompt
+async function generatePrompt() {
+  const raw = inputEl.value.trim();
+  
+  if (!raw) {
+    showNotification('Please enter some text first.', 'error');
+    outputEl.value = '';
+    return;
+  }
+  
+  // Update UI to show loading state
+  generateBtn.innerHTML = '<span class="loading"></span> Processing...';
+  generateBtn.disabled = true;
+  outputEl.value = "Refining your prompt...";
+  
+  const payload = {
+    model: "qwen/qwen3-32b",
+    messages: [
+      {
+        role: "system",
+        content: "You are a Prompt Refiner. Your ONLY task is to convert the user's raw input into a clear, effective AI prompt. Output MUST be ONLY the refined prompt itself with NO additional text, NO explanations, NO thinking process, NO tags like <think>, and NO conversational elements. Never use phrases like 'Okay', 'Let me', 'I need to', or 'The user wants'. Just output the clean, refined prompt."
+      },
+      { role: "user", content: raw }
+    ],
+    temperature: 0.3,
+    max_tokens: 200
+  };
+  
+  try {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    const data = await res.json();
+    
+    if (data.error) {
+      outputEl.value = "API Error: " + data.error.message;
+      showNotification('Error: ' + data.error.message, 'error');
+    } else {
+      let refinedPrompt = data.choices?.[0]?.message?.content?.trim() || "No response generated.";
       
-      if (!raw) {
-        showNotification('Please enter some text first.', 'error');
-        outputEl.value = '';
-        return;
-      }
+      // COMPREHENSIVE CLEANUP: Remove any thinking text patterns
+      // 1. Remove <think> tags and their content
+      refinedPrompt = refinedPrompt.replace(/<think>[\s\S]*?<\/think>/g, '');
       
-      // Update UI to show loading state
-      generateBtn.innerHTML = '<span class="loading"></span> Processing...';
-      generateBtn.disabled = true;
-      outputEl.value = "Refining your prompt...";
+      // 2. Remove common thinking phrases (case insensitive)
+      refinedPrompt = refinedPrompt.replace(/Okay, the user is asking[\s\S]*?Let me make sure/gi, '');
+      refinedPrompt = refinedPrompt.replace(/I need to convert this[\s\S]*?plain text\./gi, '');
+      refinedPrompt = refinedPrompt.replace(/Okay, the user wants[\s\S]*?Let me break this down/gi, '');
+      refinedPrompt = refinedPrompt.replace(/Let me think about how[\s\S]*?First, I should/gi, '');
+      refinedPrompt = refinedPrompt.replace(/The user is asking for[\s\S]*?I need to/gi, '');
       
-      const payload = {
-        model: "qwen/qwen3-32b",
-        messages: [
-          {
-            role: "system",
-            content: "You are a Prompt Refiner. Your task is to convert user's raw input into a clear AI prompt in 2-3 concise lines. NEVER include any reasoning, explanations, thinking process, or tags like <think>. Output ONLY the refined prompt with no additional text. If the input is a question, transform it into a directive for an AI assistant."
-          },
-          { role: "user", content: raw }
-        ],
-        temperature: 0.3,
-        max_tokens: 200
-      };
+      // 3. Remove any line that starts with thinking indicators
+      refinedPrompt = refinedPrompt.replace(/^(Okay,|So,|First,|I need to|Let me|I should|The user|Hmm,|Well,).*$/gim, '');
       
-      try {
-        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
-          },
-          body: JSON.stringify(payload)
-        });
-        
-        const data = await res.json();
-        
-        if (data.error) {
-          outputEl.value = "API Error: " + data.error.message;
-          showNotification('Error: ' + data.error.message, 'error');
-        } else {
-          let refinedPrompt = data.choices?.[0]?.message?.content?.trim() || "No response generated.";
-          
-          // Clean up the response to remove any thinking text
-          refinedPrompt = refinedPrompt.replace(/<think>[\s\S]*?<\/think>/g, '');
-          refinedPrompt = refinedPrompt.replace(/Okay, the user is asking[\s\S]*?Let me make sure/g, '');
-          refinedPrompt = refinedPrompt.replace(/I need to convert this[\s\S]*?plain text\./g, '');
-          
-          // EXTRA CLEANUP: Remove empty lines from start and end
-          refinedPrompt = refinedPrompt.replace(/^\s*\n/gm, ''); // Remove empty lines from start
-          refinedPrompt = refinedPrompt.replace(/\n\s*$/gm, ''); // Remove empty lines from end
-          refinedPrompt = refinedPrompt.trim(); // Final trim
-          
-          outputEl.value = refinedPrompt;
-          showNotification('Prompt refined successfully!', 'success');
-        }
-      } catch (err) {
-        outputEl.value = "Error: " + err.message;
-        showNotification('Network error. Please try again.', 'error');
-      } finally {
-        // Reset button state
-        generateBtn.innerHTML = '<i class="fas fa-gear"></i> Generate';
-        generateBtn.disabled = false;
-      }
+      // 4. Remove empty lines from start and end
+      refinedPrompt = refinedPrompt.replace(/^\s*\n/gm, ''); // Remove empty lines from start
+      refinedPrompt = refinedPrompt.replace(/\n\s*$/gm, ''); // Remove empty lines from end
+      
+      // 5. Final cleanup of any remaining artifacts
+      refinedPrompt = refinedPrompt.replace(/\s+/g, ' ').trim(); // Replace multiple spaces with single space
+      refinedPrompt = refinedPrompt.replace(/^[\s\W]+|[\s\W]+$/g, ''); // Remove any non-word characters from ends
+      
+      outputEl.value = refinedPrompt;
+      showNotification('Prompt refined successfully!', 'success');
     }
+  } catch (err) {
+    outputEl.value = "Error: " + err.message;
+    showNotification('Network error. Please try again.', 'error');
+  } finally {
+    // Reset button state
+    generateBtn.innerHTML = '<i class="fas fa-gear"></i> Generate';
+    generateBtn.disabled = false;
+  }
+}
     
     // Copy text to clipboard
     function copyText() {
