@@ -62,6 +62,29 @@
       margin-bottom: 10px;
       font-size: 1.8rem;
     }
+
+    .logo-icon {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+/* Tablet */
+@media (min-width: 480px) {
+  .logo-icon {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
     
     .description {
       color: var(--secondary);
@@ -308,10 +331,10 @@
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1><i class="fas fa-magic"></i> Prompt Refiner</h1>
-      <p class="description">Transform your raw ideas into effective AI prompts with a single click.</p>
-    </header>
+<header>
+  <h1><img src="magic-wand.png" class="logo-icon" alt=""> Prompt Refiner</h1>
+  <p class="description">Transform your raw ideas into effective AI prompts with a single click.</p>
+</header>
     
     <div class="input-group">
       <label for="input"><i class="fas fa-pencil-alt"></i> Your Raw Input</label>
@@ -350,7 +373,7 @@
   </div>
   
   <footer>
-    <p>Powered by Groq AI • Prompt Refiner v1.2</p>
+    <p>Powered by Nedits AI • Prompt Refiner v1.2</p>
   </footer>
   
   <div class="notification" id="notification">
