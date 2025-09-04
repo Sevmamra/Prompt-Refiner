@@ -2,7 +2,7 @@
   "name": "Prompt Refiner",
   "short_name": "PromptRefiner",
   "description": "Transform your raw ideas into effective AI prompts with a single click.",
-  "start_url": "/",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#2c89ff",
   "theme_color": "#2c89ff",
