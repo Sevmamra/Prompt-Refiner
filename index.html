@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Prompt Refiner — Groq AI</title>
+  <title>Prompt Refiner — AI-Powered Prompt Enhancement</title>
   <meta name="theme-color" content="#2c89ff"/>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192x192.png">
@@ -13,14 +13,17 @@
     :root {
       --primary: #2c89ff;
       --primary-hover: #1a6edc;
+      --primary-light: rgba(44, 137, 255, 0.1);
       --secondary: #6c757d;
       --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
       --light: #f8f9fa;
       --dark: #1f2937;
       --gray: #d9e2ec;
       --white: #ffffff;
-      --border-radius: 12px;
-      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --border-radius: 16px;
+      --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       --transition: all 0.3s ease;
     }
     
@@ -32,97 +35,116 @@
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f0f3f7, #d9e2ec);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f0f3f7 0%, #d9e2ec 100%);
       margin: 0;
       padding: 20px 15px;
       color: var(--dark);
       line-height: 1.6;
       min-height: 100vh;
-      /* Prevent zoom on input focus iOS */
       font-size: 16px;
     }
     
     .container {
-      max-width: 700px;
+      max-width: 800px;
       margin: 0 auto;
       background: var(--white);
-      padding: 25px 20px;
+      padding: 30px;
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
     }
     
     header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      margin-right: 15px;
+      filter: drop-shadow(0 4px 6px rgba(44, 137, 255, 0.3));
     }
     
     h1 {
       color: #2c3e50;
       margin-bottom: 10px;
-      font-size: 1.8rem;
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary) 0%, #1a6edc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
-
-    .logo-icon {
-  width: 30px;
-  height: 30px;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-
-/* Tablet */
-@media (min-width: 480px) {
-  .logo-icon {
-    width: 35px;
-    height: 35px;
-  }
-}
-
-/* Desktop */
-@media (min-width: 768px) {
-  .logo-icon {
-    width: 40px;
-    height: 40px;
-  }
-}
     
     .description {
       color: var(--secondary);
       margin-bottom: 20px;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
     
-    .input-group, .output-group {
-      margin-bottom: 20px;
+    .card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      border: 1px solid rgba(44, 137, 255, 0.1);
     }
     
-    label {
-      display: block;
-      margin-bottom: 8px;
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .card-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      color: var(--primary);
+    }
+    
+    .card-title {
       font-weight: 600;
       color: #2c3e50;
+      font-size: 1.2rem;
     }
     
     textarea {
       width: 100%;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
       font-size: 16px;
       font-family: inherit;
       transition: var(--transition);
       resize: vertical;
-      min-height: 44px; /* Better touch targets */
+      min-height: 44px;
+      background: var(--light);
+      line-height: 1.5;
     }
     
     textarea:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(44, 137, 255, 0.2);
+      background: var(--white);
     }
     
     #input { 
-      height: 120px; 
+      height: 140px; 
     }
     
     #output { 
@@ -130,80 +152,95 @@
       background: #f9fafb;
     }
     
+    .char-count {
+      text-align: right;
+      font-size: 0.85rem;
+      color: var(--secondary);
+      margin-top: 5px;
+    }
+    
     .buttons {
       display: flex;
       justify-content: space-between;
       margin-top: 20px;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
     
     button {
-      padding: 14px 20px;
+      padding: 16px 24px;
       background: var(--primary);
       color: var(--white);
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 16px;
       font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       transition: var(--transition);
-      min-height: 50px; /* Better touch targets */
+      min-height: 54px;
       flex: 1;
-      min-width: 120px;
+      min-width: 140px;
+      box-shadow: 0 4px 6px rgba(44, 137, 255, 0.2);
     }
     
     button:hover {
       background: var(--primary-hover);
       transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(44, 137, 255, 0.25);
     }
     
     button:active {
       transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(44, 137, 255, 0.2);
     }
     
     button.secondary {
       background: var(--secondary);
+      box-shadow: 0 4px 6px rgba(108, 117, 125, 0.2);
     }
     
     button.secondary:hover {
       background: #5a6268;
+      box-shadow: 0 6px 12px rgba(108, 117, 125, 0.25);
     }
     
     button.success {
       background: var(--success);
+      box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
     }
     
     button.success:hover {
       background: #218838;
+      box-shadow: 0 6px 12px rgba(40, 167, 69, 0.25);
     }
     
     button:disabled {
       background: #a0a0a0;
       cursor: not-allowed;
       transform: none;
+      box-shadow: none;
     }
     
     .notification {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 15px 20px;
-      border-radius: 8px;
+      top: 25px;
+      right: 25px;
+      padding: 18px 24px;
+      border-radius: 12px;
       background: var(--white);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
       transform: translateX(100%);
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
       z-index: 1000;
       display: flex;
       align-items: center;
-      gap: 10px;
-      max-width: calc(100vw - 40px);
+      gap: 12px;
+      max-width: calc(100vw - 50px);
     }
     
     .notification.show {
@@ -216,7 +253,11 @@
     }
     
     .notification.error {
-      border-left: 4px solid #dc3545;
+      border-left: 4px solid var(--danger);
+    }
+    
+    .notification.warning {
+      border-left: 4px solid var(--warning);
     }
     
     .loading {
@@ -234,34 +275,37 @@
     }
     
     .examples {
-      margin-top: 30px;
+      margin-top: 35px;
       border-top: 1px solid var(--gray);
-      padding-top: 20px;
+      padding-top: 25px;
     }
     
     .examples h3 {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
       color: #2c3e50;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     
     .example-list {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
+      gap: 12px;
     }
     
     .example-btn {
       background: var(--light);
       color: var(--dark);
-      border: 1px solid #dee2e6;
-      padding: 12px 15px;
-      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 18px;
+      border-radius: 12px;
       cursor: pointer;
       text-align: left;
-      font-size: 14px;
+      font-size: 15px;
       transition: var(--transition);
-      min-height: 44px; /* Better touch targets */
+      min-height: 50px;
       display: flex;
       align-items: center;
     }
@@ -269,24 +313,45 @@
     .example-btn:hover {
       background: #e9ecef;
       border-color: #ced4da;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
     
     footer {
       text-align: center;
-      margin-top: 30px;
+      margin-top: 40px;
       color: var(--secondary);
-      font-size: 0.9rem;
-      padding: 0 10px;
+      font-size: 0.95rem;
+      padding: 0 15px;
+    }
+    
+    .api-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.85rem;
+    }
+    
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
     }
     
     /* Tablet */
     @media (min-width: 480px) {
       .container {
-        padding: 30px;
+        padding: 35px;
       }
       
       h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
       }
       
       .example-list {
@@ -307,16 +372,12 @@
       .buttons {
         flex-wrap: nowrap;
       }
-      
-      button {
-        flex: none;
-      }
     }
     
     /* Very small devices */
     @media (max-width: 350px) {
       h1 {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
       }
       
       .buttons {
@@ -326,30 +387,48 @@
       button {
         width: 100%;
       }
+      
+      .container {
+        padding: 20px 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-<header>
-  <h1><img src="magic-wand.png" class="logo-icon" alt=""> Prompt Refiner</h1>
-  <p class="description">Transform your raw ideas into effective AI prompts with a single click.</p>
-</header>
+    <header>
+      <div class="logo-container">
+        <!-- Replace with your actual magic-wand.png -->
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 21L15 3M11 13L9 17M13 7L5 19M19 7H21M19 11V13M17 15H15M21 3L17 7M3 21L12 12" stroke="#2c89ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1>Prompt Refiner</h1>
+      </div>
+      <p class="description">Transform your raw ideas into effective AI prompts with a single click. Powered by advanced AI technology.</p>
+    </header>
     
-    <div class="input-group">
-      <label for="input"><i class="fas fa-pencil-alt"></i> Your Raw Input</label>
-      <textarea id="input" placeholder="Type your raw text here..."></textarea>
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-pencil-alt card-icon"></i>
+        <div class="card-title">Your Raw Input</div>
+      </div>
+      <textarea id="input" placeholder="Type your raw text or idea here..."></textarea>
+      <div class="char-count"><span id="input-count">0</span> characters</div>
     </div>
     
-    <div class="output-group">
-      <label for="output"><i class="fas fa-sparkles"></i> Refined Prompt</label>
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-sparkles card-icon"></i>
+        <div class="card-title">Refined Prompt</div>
+      </div>
       <textarea id="output" readonly placeholder="Your refined prompt will appear here..."></textarea>
+      <div class="char-count"><span id="output-count">0</span> characters</div>
     </div>
     
     <div class="buttons">
-      <div style="display: flex; gap: 10px; flex: 1;">
+      <div style="display: flex; gap: 12px; flex: 1;">
         <button id="generateBtn" onclick="generatePrompt()">
-          <i class="fas fa-gear"></i> Generate
+          <i class="fas fa-wand-magic-sparkles"></i> Generate
         </button>
         <button class="secondary" onclick="clearAll()">
           <i class="fas fa-broom"></i> Clear
@@ -365,15 +444,17 @@
     <div class="examples">
       <h3><i class="fas fa-lightbulb"></i> Example Inputs</h3>
       <div class="example-list" id="exampleList">
-        <button class="example-btn" onclick="loadExample(this)">Loading examples...</button>
-        <button class="example-btn" onclick="loadExample(this)">Loading examples...</button>
-        <button class="example-btn" onclick="loadExample(this)">Loading examples...</button>
+        <!-- Examples will be loaded dynamically -->
       </div>
     </div>
   </div>
   
   <footer>
-    <p>Powered by Nedits AI • Prompt Refiner v1.2</p>
+    <p>Powered by Nedits AI • Prompt Refiner v2.0</p>
+    <div class="api-status">
+      <span class="status-dot"></span>
+      <span id="api-status-text">API Connected</span>
+    </div>
   </footer>
   
   <div class="notification" id="notification">
@@ -397,7 +478,7 @@
     
     // API key would ideally be handled by a backend service
     // This is just for demonstration purposes
-    const apiKey = "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";
+    const apiKey = "YOUR_GROQ_API_KEY_HERE";
     
     // DOM elements
     const inputEl = document.getElementById('input');
@@ -407,6 +488,10 @@
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
     const exampleList = document.getElementById('exampleList');
+    const inputCount = document.getElementById('input-count');
+    const outputCount = document.getElementById('output-count');
+    const apiStatusText = document.getElementById('api-status-text');
+    const statusDot = document.querySelector('.status-dot');
     
     // Pre-defined example prompts for fallback
     const fallbackExamples = [
@@ -425,7 +510,32 @@
     window.addEventListener('DOMContentLoaded', function() {
       generateRandomExamples();
       setupPWA();
+      setupCharCount();
+      checkAPIStatus();
     });
+    
+    // Setup character count
+    function setupCharCount() {
+      inputEl.addEventListener('input', function() {
+        inputCount.textContent = this.value.length;
+      });
+      
+      outputEl.addEventListener('input', function() {
+        outputCount.textContent = this.value.length;
+      });
+    }
+    
+    // Check API status
+    function checkAPIStatus() {
+      if (!apiKey || apiKey === "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") {
+        apiStatusText.textContent = "API Key Required";
+        statusDot.style.background = "#dc3545";
+        showNotification('Please add your Groq API key to use this app', 'warning', 5000);
+      } else {
+        apiStatusText.textContent = "API Connected";
+        statusDot.style.background = "#28a745";
+      }
+    }
     
     // Generate 3 random examples from fallback or AI
     async function generateRandomExamples() {
@@ -437,26 +547,30 @@
         console.log("Using fallback examples:", error);
         // Use shuffled fallback examples if AI fails
         const shuffled = [...fallbackExamples].sort(() => 0.5 - Math.random());
-        displayExamples(shuffled.slice(0, 3));
+        displayExamples(shuffled.slice(0, 6));
       }
     }
     
     // Generate AI-based random examples
     async function generateAIExamples() {
+      if (!apiKey || apiKey === "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") {
+        throw new Error("API key not configured");
+      }
+      
       const payload = {
         model: "qwen/qwen3-32b",
         messages: [
           {
             role: "system",
-            content: "Generate 3 diverse and interesting example prompts that users might input into a prompt refinement tool. Return ONLY a JSON array of exactly 3 strings, no other text. Examples should be creative, varied, and demonstrate different use cases for AI assistance."
+            content: "Generate 6 diverse and interesting example prompts that users might input into a prompt refinement tool. Return ONLY a JSON array of exactly 6 strings, no other text. Examples should be creative, varied, and demonstrate different use cases for AI assistance."
           },
           { 
             role: "user", 
-            content: "Generate 3 random example prompts for different use cases." 
+            content: "Generate 6 random example prompts for different use cases." 
           }
         ],
         temperature: 0.8,
-        max_tokens: 200
+        max_tokens: 300
       };
       
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -479,14 +593,14 @@
       // Try to parse JSON response
       try {
         const examples = JSON.parse(examplesText);
-        if (Array.isArray(examples) && examples.length >= 3) {
-          return examples.slice(0, 3);
+        if (Array.isArray(examples) && examples.length >= 6) {
+          return examples.slice(0, 6);
         }
       } catch (e) {
         // If JSON parsing fails, try to extract examples from text
         const exampleMatches = examplesText.match(/"([^"]+)"/g) || examplesText.match(/'([^']+)'/g);
-        if (exampleMatches && exampleMatches.length >= 3) {
-          return exampleMatches.map(m => m.replace(/["']/g, '')).slice(0, 3);
+        if (exampleMatches && exampleMatches.length >= 6) {
+          return exampleMatches.map(m => m.replace(/["']/g, '')).slice(0, 6);
         }
       }
       
@@ -495,11 +609,15 @@
     
     // Display examples in the UI
     function displayExamples(examples) {
-      const exampleButtons = exampleList.querySelectorAll('.example-btn');
-      examples.forEach((example, index) => {
-        if (exampleButtons[index]) {
-          exampleButtons[index].textContent = example;
-        }
+      exampleList.innerHTML = '';
+      examples.forEach((example) => {
+        const button = document.createElement('button');
+        button.className = 'example-btn';
+        button.textContent = example;
+        button.onclick = function() {
+          loadExample(this);
+        };
+        exampleList.appendChild(button);
       });
     }
     
@@ -519,6 +637,7 @@
     // Example prompts
     function loadExample(btn) {
       inputEl.value = btn.textContent;
+      inputCount.textContent = btn.textContent.length;
       showNotification('Example loaded! Click Generate to refine.', 'success');
     }
     
@@ -526,105 +645,125 @@
     function clearAll() {
       inputEl.value = '';
       outputEl.value = '';
+      inputCount.textContent = '0';
+      outputCount.textContent = '0';
       inputEl.focus();
       showNotification('Cleared!', 'success');
     }
     
     // Show notification
-    function showNotification(message, type) {
+    function showNotification(message, type, duration = 3000) {
       notificationText.textContent = message;
       notification.className = 'notification ' + type;
       notification.classList.add('show');
       
+      // Set appropriate icon
+      const icon = notification.querySelector('i');
+      if (type === 'success') {
+        icon.className = 'fas fa-check-circle';
+      } else if (type === 'error') {
+        icon.className = 'fas fa-exclamation-circle';
+      } else if (type === 'warning') {
+        icon.className = 'fas fa-exclamation-triangle';
+      }
+      
       setTimeout(() => {
         notification.classList.remove('show');
-      }, 3000);
+      }, duration);
     }
     
-// Generate refined prompt
-async function generatePrompt() {
-  const raw = inputEl.value.trim();
-  
-  if (!raw) {
-    showNotification('Please enter some text first.', 'error');
-    outputEl.value = '';
-    return;
-  }
-  
-  // Update UI to show loading state
-  generateBtn.innerHTML = '<span class="loading"></span> Processing...';
-  generateBtn.disabled = true;
-  outputEl.value = "Refining your prompt...";
-  
-  const payload = {
-    model: "qwen/qwen3-32b",
-    messages: [
-      {
-        role: "system",
-        content: "You are a Prompt Refiner. Your ONLY task is to convert the user's raw input into a clear, effective AI prompt. Output MUST be ONLY the refined prompt itself with NO additional text, NO explanations, NO thinking process, NO tags like <think>, and NO conversational elements. Never use phrases like 'Okay', 'Let me', 'I need to', or 'The user wants'. Just output the clean, refined prompt."
-      },
-      { role: "user", content: raw }
-    ],
-    temperature: 0.3,
-    max_tokens: 200
-  };
-  
-  try {
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(payload)
-    });
-    
-    const data = await res.json();
-    
-    if (data.error) {
-      outputEl.value = "API Error: " + data.error.message;
-      showNotification('Error: ' + data.error.message, 'error');
-    } else {
-      let refinedPrompt = data.choices?.[0]?.message?.content?.trim() || "No response generated.";
+    // Generate refined prompt
+    async function generatePrompt() {
+      const raw = inputEl.value.trim();
       
-      // COMPREHENSIVE CLEANUP: Remove any thinking text patterns
-      // 1. Remove <think> tags and their content
-      refinedPrompt = refinedPrompt.replace(/<think>[\s\S]*?<\/think>/g, '');
+      if (!raw) {
+        showNotification('Please enter some text first.', 'error');
+        outputEl.value = '';
+        outputCount.textContent = '0';
+        return;
+      }
       
-      // 2. Remove common thinking phrases (case insensitive)
-      refinedPrompt = refinedPrompt.replace(/Okay, the user is asking[\s\S]*?Let me make sure/gi, '');
-      refinedPrompt = refinedPrompt.replace(/I need to convert this[\s\S]*?plain text\./gi, '');
-      refinedPrompt = refinedPrompt.replace(/Okay, the user wants[\s\S]*?Let me break this down/gi, '');
-      refinedPrompt = refinedPrompt.replace(/Let me think about how[\s\S]*?First, I should/gi, '');
-      refinedPrompt = refinedPrompt.replace(/The user is asking for[\s\S]*?I need to/gi, '');
+      if (!apiKey || apiKey === "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") {
+        showNotification('Please configure your API key first.', 'error', 5000);
+        return;
+      }
       
-      // 3. Remove any line that starts with thinking indicators
-      refinedPrompt = refinedPrompt.replace(/^(Okay,|So,|First,|I need to|Let me|I should|The user|Hmm,|Well,).*$/gim, '');
+      // Update UI to show loading state
+      generateBtn.innerHTML = '<span class="loading"></span> Processing...';
+      generateBtn.disabled = true;
+      outputEl.value = "Refining your prompt...";
       
-      // 4. Remove empty lines from start and end
-      refinedPrompt = refinedPrompt.replace(/^\s*\n/gm, ''); // Remove empty lines from start
-      refinedPrompt = refinedPrompt.replace(/\n\s*$/gm, ''); // Remove empty lines from end
+      const payload = {
+        model: "qwen/qwen3-32b",
+        messages: [
+          {
+            role: "system",
+            content: "You are a Prompt Refiner. Your ONLY task is to convert the user's raw input into a clear, effective AI prompt. Output MUST be ONLY the refined prompt itself with NO additional text, NO explanations, NO thinking process, NO tags like <think>, and NO conversational elements. Never use phrases like 'Okay', 'Let me', 'I need to', or 'The user wants'. Just output the clean, refined prompt."
+          },
+          { role: "user", content: raw }
+        ],
+        temperature: 0.3,
+        max_tokens: 250
+      };
       
-      // 5. Final cleanup of any remaining artifacts
-      refinedPrompt = refinedPrompt.replace(/\s+/g, ' ').trim(); // Replace multiple spaces with single space
-      refinedPrompt = refinedPrompt.replace(/^[\s\W]+|[\s\W]+$/g, ''); // Remove any non-word characters from ends
-      
-      outputEl.value = refinedPrompt;
-      showNotification('Prompt refined successfully!', 'success');
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (data.error) {
+          outputEl.value = "API Error: " + data.error.message;
+          showNotification('Error: ' + data.error.message, 'error');
+        } else {
+          let refinedPrompt = data.choices?.[0]?.message?.content?.trim() || "No response generated.";
+          
+          // COMPREHENSIVE CLEANUP: Remove any thinking text patterns
+          // 1. Remove <think> tags and their content
+          refinedPrompt = refinedPrompt.replace(/<think>[\s\S]*?<\/think>/g, '');
+          
+          // 2. Remove common thinking phrases (case insensitive)
+          refinedPrompt = refinedPrompt.replace(/Okay, the user is asking[\s\S]*?Let me make sure/gi, '');
+          refinedPrompt = refinedPrompt.replace(/I need to convert this[\s\S]*?plain text\./gi, '');
+          refinedPrompt = refinedPrompt.replace(/Okay, the user wants[\s\S]*?Let me break this down/gi, '');
+          refinedPrompt = refinedPrompt.replace(/Let me think about how[\s\S]*?First, I should/gi, '');
+          refinedPrompt = refinedPrompt.replace(/The user is asking for[\s\S]*?I need to/gi, '');
+          
+          // 3. Remove any line that starts with thinking indicators
+          refinedPrompt = refinedPrompt.replace(/^(Okay,|So,|First,|I need to|Let me|I should|The user|Hmm,|Well,).*$/gim, '');
+          
+          // 4. Remove empty lines from start and end
+          refinedPrompt = refinedPrompt.replace(/^\s*\n/gm, '');
+          refinedPrompt = refinedPrompt.replace(/\n\s*$/gm, '');
+          
+          // 5. Final cleanup of any remaining artifacts
+          refinedPrompt = refinedPrompt.replace(/\s+/g, ' ').trim();
+          refinedPrompt = refinedPrompt.replace(/^[\s\W]+|[\s\W]+$/g, '');
+          
+          outputEl.value = refinedPrompt;
+          outputCount.textContent = refinedPrompt.length;
+          showNotification('Prompt refined successfully!', 'success');
+        }
+      } catch (err) {
+        outputEl.value = "Error: " + err.message;
+        outputCount.textContent = outputEl.value.length;
+        showNotification('Network error. Please try again.', 'error');
+      } finally {
+        // Reset button state
+        generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Generate';
+        generateBtn.disabled = false;
+      }
     }
-  } catch (err) {
-    outputEl.value = "Error: " + err.message;
-    showNotification('Network error. Please try again.', 'error');
-  } finally {
-    // Reset button state
-    generateBtn.innerHTML = '<i class="fas fa-gear"></i> Generate';
-    generateBtn.disabled = false;
-  }
-}
     
     // Copy text to clipboard
     function copyText() {
-      if (!outputEl.value) {
+      if (!outputEl.value || outputEl.value === "Refining your prompt..." || outputEl.value.includes("Error")) {
         showNotification('Nothing to copy! Generate a prompt first.', 'error');
         return;
       }
