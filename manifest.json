@@ -1,22 +1,26 @@
 {
   "name": "Prompt Refiner",
   "short_name": "PromptRefiner",
-  "description": "Transform raw ideas into effective AI prompts",
+  "description": "Transform your raw ideas into effective AI prompts with a single click.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f0f3f7",
+  "background_color": "#2c89ff",
   "theme_color": "#2c89ff",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192x192.png",
+      "src": "magic-wand.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icon-512x512.png",
+      "src": "magic-wand.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "en"
 }
