@@ -1,6 +1,6 @@
 const CACHE_NAME = 'prompt-refiner-v1.2';
 const urlsToCache = [
-  '/index.html',
+  '/Prompt-Refiner',
   '/index.html',
   'magic-wand.png',
   'icon-192x192.png'
