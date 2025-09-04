@@ -527,7 +527,7 @@
     
     // Check API status
     function checkAPIStatus() {
-      if (!apiKey || apiKey === "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") {
+      if (!apiKey || apiKey === "YOUR_GROQ_API_KEY_HERE") {
         apiStatusText.textContent = "API Key Required";
         statusDot.style.background = "#dc3545";
         showNotification('Please add your Groq API key to use this app', 'warning', 5000);
@@ -553,7 +553,7 @@
     
     // Generate AI-based random examples
     async function generateAIExamples() {
-      if (!apiKey || apiKey === "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") {
+      if (!apiKey || apiKey === "YOUR_GROQ_API_KEY_HERE") {
         throw new Error("API key not configured");
       }
       
@@ -683,7 +683,7 @@
         return;
       }
       
-      if (!apiKey || apiKey === "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") {
+      if (!apiKey || apiKey === "YOUR_GROQ_API_KEY_HERE") {
         showNotification('Please configure your API key first.', 'error', 5000);
         return;
       }
