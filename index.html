@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prompt Refiner — Groq AI</title>
+  <meta name="theme-color" content="#2c89ff"/>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192x192.png">
+  <link rel="icon" type="image/png" href="icon-192x192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2c89ff;
+      --primary-hover: #1a6edc;
+      --secondary: #6c757d;
+      --success: #28a745;
+      --light: #f8f9fa;
+      --dark: #1f2937;
+      --gray: #d9e2ec;
+      --white: #ffffff;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f3f7, #d9e2ec);
+      margin: 0;
+      padding: 20px 15px;
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      /* Prevent zoom on input focus iOS */
+      font-size: 16px;
+    }
+    
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--white);
+      padding: 25px 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 1.8rem;
+    }
+    
+    .description {
+      color: var(--secondary);
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+    
+    .input-group, .output-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      font-family: inherit;
+      transition: var(--transition);
+      resize: vertical;
+      min-height: 44px; /* Better touch targets */
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(44, 137, 255, 0.2);
+    }
+    
+    #input { 
+      height: 120px; 
+    }
+    
+    #output { 
+      height: 180px; 
+      background: #f9fafb;
+    }
+    
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    button {
+      padding: 14px 20px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      min-height: 50px; /* Better touch targets */
+      flex: 1;
+      min-width: 120px;
+    }
+    
+    button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button.secondary {
+      background: var(--secondary);
+    }
+    
+    button.secondary:hover {
+      background: #5a6268;
+    }
+    
+    button.success {
+      background: var(--success);
+    }
+    
+    button.success:hover {
+      background: #218838;
+    }
+    
+    button:disabled {
+      background: #a0a0a0;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateX(100%);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: calc(100vw - 40px);
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    .notification.success {
+      border-left: 4px solid var(--success);
+    }
+    
+    .notification.error {
+      border-left: 4px solid #dc3545;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: var(--white);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .examples {
+      margin-top: 30px;
+      border-top: 1px solid var(--gray);
+      padding-top: 20px;
+    }
+    
+    .examples h3 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+      font-size: 1.2rem;
+    }
+    
+    .example-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    
+    .example-btn {
+      background: var(--light);
+      color: var(--dark);
+      border: 1px solid #dee2e6;
+      padding: 12px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      transition: var(--transition);
+      min-height: 44px; /* Better touch targets */
+      display: flex;
+      align-items: center;
+    }
+    
+    .example-btn:hover {
+      background: #e9ecef;
+      border-color: #ced4da;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--secondary);
+      font-size: 0.9rem;
+      padding: 0 10px;
+    }
+    
+    /* Tablet */
+    @media (min-width: 480px) {
+      .container {
+        padding: 30px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .example-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    /* Desktop */
+    @media (min-width: 768px) {
+      body {
+        padding: 30px 20px;
+      }
+      
+      .example-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .buttons {
+        flex-wrap: nowrap;
+      }
+      
+      button {
+        flex: none;
+      }
+    }
+    
+    /* Very small devices */
+    @media (max-width: 350px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+      
+      .buttons {
+        flex-direction: column;
+      }
+      
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-magic"></i> Prompt Refiner</h1>
+      <p class="description">Transform your raw ideas into effective AI prompts with a single click.</p>
+    </header>
+    
+    <div class="input-group">
+      <label for="input"><i class="fas fa-pencil-alt"></i> Your Raw Input</label>
+      <textarea id="input" placeholder="Type your raw text here..."></textarea>
+    </div>
+    
+    <div class="output-group">
+      <label for="output"><i class="fas fa-sparkles"></i> Refined Prompt</label>
+      <textarea id="output" readonly placeholder="Your refined prompt will appear here..."></textarea>
+    </div>
+    
+    <div class="buttons">
+      <div style="display: flex; gap: 10px; flex: 1;">
+        <button id="generateBtn" onclick="generatePrompt()">
+          <i class="fas fa-gear"></i> Generate
+        </button>
+        <button class="secondary" onclick="clearAll()">
+          <i class="fas fa-broom"></i> Clear
+        </button>
+      </div>
+      <div style="display: flex; flex: 1;">
+        <button class="success" onclick="copyText()" id="copyBtn">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+    </div>
+    
+    <div class="examples">
+      <h3><i class="fas fa-lightbulb"></i> Example Inputs</h3>
+      <div class="example-list" id="exampleList">
+        <button class="example-btn" onclick="loadExample(this)">Loading examples...</button>
+        <button class="example-btn" onclick="loadExample(this)">Loading examples...</button>
+        <button class="example-btn" onclick="loadExample(this)">Loading examples...</button>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>Powered by Groq AI • Prompt Refiner v1.2</p>
+  </footer>
+  
+  <div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notification-text"></span>
+  </div>
+
+  <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js')
+          .then(function(registration) {
+            console.log('SW registered: ', registration);
+          })
+          .catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+    
+    // API key would ideally be handled by a backend service
+    // This is just for demonstration purposes
+    const apiKey = "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";
+    
+    // DOM elements
+    const inputEl = document.getElementById('input');
+    const outputEl = document.getElementById('output');
+    const generateBtn = document.getElementById('generateBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notification-text');
+    const exampleList = document.getElementById('exampleList');
+    
+    // Pre-defined example prompts for fallback
+    const fallbackExamples = [
+      "I need a story about a robot learning to paint",
+      "Explain quantum computing simply",
+      "Healthy dinner recipes for beginners",
+      "Tips for improving public speaking skills",
+      "How to learn a new language quickly",
+      "Write a poem about the changing seasons",
+      "Best ways to reduce stress naturally",
+      "How does artificial intelligence work?",
+      "Create a workout plan for busy professionals"
+    ];
+    
+    // Initialize the app
+    window.addEventListener('DOMContentLoaded', function() {
+      generateRandomExamples();
+      setupPWA();
+    });
+    
+    // Generate 3 random examples from fallback or AI
+    async function generateRandomExamples() {
+      try {
+        // Try to get AI-generated examples
+        const aiExamples = await generateAIExamples();
+        displayExamples(aiExamples);
+      } catch (error) {
+        console.log("Using fallback examples:", error);
+        // Use shuffled fallback examples if AI fails
+        const shuffled = [...fallbackExamples].sort(() => 0.5 - Math.random());
+        displayExamples(shuffled.slice(0, 3));
+      }
+    }
+    
+    // Generate AI-based random examples
+    async function generateAIExamples() {
+      const payload = {
+        model: "qwen/qwen3-32b",
+        messages: [
+          {
+            role: "system",
+            content: "Generate 3 diverse and interesting example prompts that users might input into a prompt refinement tool. Return ONLY a JSON array of exactly 3 strings, no other text. Examples should be creative, varied, and demonstrate different use cases for AI assistance."
+          },
+          { 
+            role: "user", 
+            content: "Generate 3 random example prompts for different use cases." 
+          }
+        ],
+        temperature: 0.8,
+        max_tokens: 200
+      };
+      
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await res.json();
+      
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+      
+      let examplesText = data.choices?.[0]?.message?.content?.trim() || '';
+      
+      // Try to parse JSON response
+      try {
+        const examples = JSON.parse(examplesText);
+        if (Array.isArray(examples) && examples.length >= 3) {
+          return examples.slice(0, 3);
+        }
+      } catch (e) {
+        // If JSON parsing fails, try to extract examples from text
+        const exampleMatches = examplesText.match(/"([^"]+)"/g) || examplesText.match(/'([^']+)'/g);
+        if (exampleMatches && exampleMatches.length >= 3) {
+          return exampleMatches.map(m => m.replace(/["']/g, '')).slice(0, 3);
+        }
+      }
+      
+      throw new Error("Could not generate AI examples");
+    }
+    
+    // Display examples in the UI
+    function displayExamples(examples) {
+      const exampleButtons = exampleList.querySelectorAll('.example-btn');
+      examples.forEach((example, index) => {
+        if (exampleButtons[index]) {
+          exampleButtons[index].textContent = example;
+        }
+      });
+    }
+    
+    // Setup PWA features
+    function setupPWA() {
+      // Prevent pull-to-refresh on mobile
+      document.body.style.overscrollBehavior = 'none';
+      
+      // Add to homescreen prompt (optional)
+      let deferredPrompt;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+      });
+    }
+    
+    // Example prompts
+    function loadExample(btn) {
+      inputEl.value = btn.textContent;
+      showNotification('Example loaded! Click Generate to refine.', 'success');
+    }
+    
+    // Clear both input and output
+    function clearAll() {
+      inputEl.value = '';
+      outputEl.value = '';
+      inputEl.focus();
+      showNotification('Cleared!', 'success');
+    }
+    
+    // Show notification
+    function showNotification(message, type) {
+      notificationText.textContent = message;
+      notification.className = 'notification ' + type;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Generate refined prompt
+    async function generatePrompt() {
+      const raw = inputEl.value.trim();
+      
+      if (!raw) {
+        showNotification('Please enter some text first.', 'error');
+        outputEl.value = '';
+        return;
+      }
+      
+      // Update UI to show loading state
+      generateBtn.innerHTML = '<span class="loading"></span> Processing...';
+      generateBtn.disabled = true;
+      outputEl.value = "Refining your prompt...";
+      
+      const payload = {
+        model: "qwen/qwen3-32b",
+        messages: [
+          {
+            role: "system",
+            content: "You are a Prompt Refiner. Your task is to convert user's raw input into a clear AI prompt in 2-3 concise lines. NEVER include any reasoning, explanations, thinking process, or tags like <think>. Output ONLY the refined prompt with no additional text. If the input is a question, transform it into a directive for an AI assistant."
+          },
+          { role: "user", content: raw }
+        ],
+        temperature: 0.3,
+        max_tokens: 200
+      };
+      
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (data.error) {
+          outputEl.value = "API Error: " + data.error.message;
+          showNotification('Error: ' + data.error.message, 'error');
+        } else {
+          let refinedPrompt = data.choices?.[0]?.message?.content?.trim() || "No response generated.";
+          
+          // Clean up the response to remove any thinking text
+          refinedPrompt = refinedPrompt.replace(/<think>[\s\S]*?<\/think>/g, '');
+          refinedPrompt = refinedPrompt.replace(/Okay, the user is asking[\s\S]*?Let me make sure/g, '');
+          refinedPrompt = refinedPrompt.replace(/I need to convert this[\s\S]*?plain text\./g, '');
+          
+          // EXTRA CLEANUP: Remove empty lines from start and end
+          refinedPrompt = refinedPrompt.replace(/^\s*\n/gm, ''); // Remove empty lines from start
+          refinedPrompt = refinedPrompt.replace(/\n\s*$/gm, ''); // Remove empty lines from end
+          refinedPrompt = refinedPrompt.trim(); // Final trim
+          
+          outputEl.value = refinedPrompt;
+          showNotification('Prompt refined successfully!', 'success');
+        }
+      } catch (err) {
+        outputEl.value = "Error: " + err.message;
+        showNotification('Network error. Please try again.', 'error');
+      } finally {
+        // Reset button state
+        generateBtn.innerHTML = '<i class="fas fa-gear"></i> Generate';
+        generateBtn.disabled = false;
+      }
+    }
+    
+    // Copy text to clipboard
+    function copyText() {
+      if (!outputEl.value) {
+        showNotification('Nothing to copy! Generate a prompt first.', 'error');
+        return;
+      }
+      
+      navigator.clipboard.writeText(outputEl.value)
+        .then(() => {
+          showNotification('Copied to clipboard!', 'success');
+          
+          // Visual feedback that copy worked
+          copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => {
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+          }, 2000);
+        })
+        .catch(err => {
+          showNotification('Failed to copy: ' + err, 'error');
+        });
+    }
+    
+    // Allow pressing Enter to generate (while in input field)
+    inputEl.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        generatePrompt();
+      }
+    });
+    
+    // Better mobile keyboard handling
+    inputEl.addEventListener('focus', function() {
+      setTimeout(() => {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }, 300);
+    });
+  </script>
+</body>
+</html>
