@@ -1,6 +1,6 @@
 {
   "name": "Prompt Refiner",
-  "short_name": "PromptRefiner",
+  "short_name": "Prompt Refiner",
   "description": "Transform your raw ideas into effective AI prompts with a single click.",
   "start_url": "/Prompt-Refiner",
   "display": "standalone",
